@@ -1,14 +1,8 @@
-<p align="center">
-  <img src="./images/cuffncode.png" width="180">
-</p>
-
 <h1 align="center">Smart Parking Multi-MCU Distribution Pipeline Workflow</h1>
 
-## KELOMPOK — IFB-206 KOMPUTASI PARALEL & SISTEM TERDISTRIBUSI
+## Evaluation 3 - IFB-206 KOMPUTASI PARALEL & SISTEM TERDISTRIBUSI
 
-- **Member 1** : [Nama Anggota 1] - [NIM]
-- **Member 2** : [Nama Anggota 2] - [NIM]
-- **Member 3** : [Nama Anggota 3] - [NIM]
+Ludhira Wira Darma Sastra Sonjaya - 152024011 
 
 ---
 
@@ -284,33 +278,6 @@ CuffnCode/
 ├── simulator/
 │   ├── __init__.py                  # Re-exports simulator public API
 │   └── parking_generator.py         # Random slot occupancy state change simulator (25% probability)
-│
-├── images/
-│   ├── cuffncode.png                # Project logo
-│   ├── complete_device.png          # Blood pressure device prototype photo
-│   ├── AFE.png                      # Analog Front End schematic screenshot
-│   ├── tina-ac-diag.jpg             # TINA-TI AC simulation diagram
-│   ├── mps20n0040d_1.png            # Pressure sensor image
-│   ├── mps20n0040d_2.png            # Pressure sensor pinout
-│   ├── tlc2272.png                  # Op-amp component image
-│   ├── ad620_1.png                  # Instrumentation amplifier image
-│   ├── ad620_2.png                  # AD620 pinout diagram
-│   ├── prototype1.png               # PCB prototype front view
-│   └── prototype2.png               # PCB prototype back view
-│
-├── KiCad/
-│   ├── AFE.kicad_pro                # KiCad project file
-│   ├── AFE.kicad_sch                # Analog Front End schematic
-│   ├── AFE.kicad_pcb                # PCB layout file
-│   └── AFE.kicad_prl                # KiCad project local settings
-│
-└── TINA-TI/
-    ├── afe-v1.tsc                   # TINA-TI simulation — AFE Version 1
-    ├── afe-vs-input.tsc             # TINA-TI simulation — vs input sweep
-    ├── ad620.TSM                    # AD620 TINA model
-    ├── ad620.cir                    # AD620 SPICE netlist
-    ├── tlc2272.cir                  # TLC2272 SPICE netlist
-    └── tlv2772.cir                  # TLV2772 SPICE netlist
 ```
 
 ### Module & Class Overview
