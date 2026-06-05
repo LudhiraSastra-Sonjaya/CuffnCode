@@ -1,73 +1,313 @@
 <p align="center">
-  <img src="./images/cuffncode.png" width="200">
+  <img src="./images/cuffncode.png" width="180">
 </p>
 
-<h4 align="center">This project is funded by IFAC Activity Fund (July 2025 to June 2026)</h4>
+<h1 align="center">Smart Parking Multi-MCU Distribution Pipeline Workflow</h1>
 
-__CuffnCode__ is a retrofitted blood pressure measurement system for teaching and research. In the long term, it aims to become an overinstrumented platform for developing and testing signal processing and control algorithms.
+## KELOMPOK — IFB-206 KOMPUTASI PARALEL & SISTEM TERDISTRIBUSI
 
-## Retrofitted pump system
+- **Member 1** : [Nama Anggota 1] - [NIM]
+- **Member 2** : [Nama Anggota 2] - [NIM]
+- **Member 3** : [Nama Anggota 3] - [NIM]
 
-<img src="./images/complete_device.png" width="600"> 
+---
 
-## Analog Front End Design
-A reproducible, low-noise analog front end for millivolt bridge sensors (e.g., MPS20N0040D, typically used for __hobbyist__ sphygmomanometer), using AD620 instrumentation amplifier and TLC2272 level shift. This analog front end should also work for other millivolt instruments.
+> **Parallel Computing & Distributed Systems Simulation**
 
+[![Python Version](https://img.shields.io/badge/python-3.10%2B-blue.svg)](https://www.python.org/)
+[![Framework](https://img.shields.io/badge/UI%20Framework-Tkinter-darkgreen.svg)](https://docs.python.org/3/library/tkinter.html)
+[![Matplotlib](https://img.shields.io/badge/Plotting-Matplotlib-orange.svg)](https://matplotlib.org/)
+[![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![Category](https://img.shields.io/badge/Course-Parallel%20Computing%20%26%20Distributed%20Systems-purple.svg)]()
 
-### TINA-TI
+---
 
-AC simulation with TINA-TI:
+## 1. Project Overview
 
-<img src="./images/AFE.png" width="600"> 
+The **Smart Parking Multi-MCU Distribution Pipeline Workflow** is an advanced simulation system designed to model a distributed smart parking management system. Developed as a final evaluation project for the **Parallel Computing and Distributed Systems** course, this system demonstrates the practical application of:
 
-<img src="./images/tina-ac-diag.jpg" width="500"> 
+- **Distributed Processing**: Distributing parking sensor workloads across multiple independent virtual Worker MCUs, each responsible for a dedicated parking area zone.
+- **Multi-Stage Pipeline Architecture**: Processing data through a sequential 6-stage distribution workflow that mirrors real embedded system communication chains.
+- **Virtual Embedded Architecture**: Modeling physical hardware boundaries (Sensor Nodes, Worker MCUs, Master MCU) through independent, isolated Python class instances.
+- **Real-Time Monitoring Dashboard**: Providing a live monitoring GUI with ECG-style heartbeat signal graphs, per-area bar charts, workflow stage indicators, and a communication log console.
 
-Instrumentation amplifier gain:
+By combining these paradigms, the simulator demonstrates how modern smart city parking infrastructures handle high-frequency sensor event streams while maintaining consistent, low-latency data aggregation in a Master-Worker MCU topology.
 
-$$ G = 1 + \frac{49.4\text{k}\Omega}{R_g} = 1 + \frac{49.4\text{k}\Omega}{470} \approx 105$$
+---
 
-TLC2272 offset:
+## 2. Key Features
 
-$$ \frac{56 \text{k}}{47\text{k} + 56 \text{k}} \times 3.3 V \approx 1.5 V$$
+- **Multi-MCU Distributed Architecture**: Implements a Master-Worker MCU topology where 3 virtual Worker MCUs independently manage their own parking zones and forward aggregated data packets to a central Master MCU.
+- **6-Stage Distribution Pipeline**: Sequentially walks through each workflow stage with animated stage indicators, making the distributed communication model visually explicit and traceable.
+- **Real-Time ECG/Heartbeat Graph**: Renders a live heartbeat-style waveform representing parking slot activity signals, with amplitude modulated by the current number of occupied slots.
+- **Per-Area Bar Chart**: Displays the number of occupied slots for each Worker MCU zone, updated in real time every simulation cycle.
+- **Animated Workflow Stage Panel**: Highlights which pipeline stage is currently executing, using blue active indicators and grey idle indicators.
+- **Dark Console Communication Log**: Appends timestamped communication messages from every Worker MCU at each pipeline stage for traceability.
+- **Slot Status Cards**: Visual parking slot buttons for each Worker MCU that toggle between green (KOSONG) and red (TERISI) states to represent real-time occupancy changes.
+- **Interactive Controls**: Start, Stop, and Reset simulation controls for full lifecycle management.
 
+---
 
+## 3. System Architecture
 
-### MPS20N0040D
-The MPS20N0040D is a millivolt-level bridge (≈50–100 mV full-scale; 4–6 kΩ)
+The simulation operates as a Master-Worker distributed topology. Each Worker MCU independently reads its sensors, processes local data, and forwards packets up to the Master MCU for global aggregation:
 
-| <img src="./images/mps20n0040d_1.png" width="300"> | <img src="./images/mps20n0040d_2.png" width="300"> |
-| ----------------------------------------- | ----------------------------------------- |
+```mermaid
+graph LR
+    subgraph Edge Sensor Layer
+        SA[Sensor - Area A]
+        SB[Sensor - Area B]
+        SC[Sensor - Area C]
+    end
 
-### TLC2272 (Dual, Low-Noise, Rail-To-Rail Operational Amplifier)
-This will be used to offset the instrumentation amplifier, giving headroom for possible undershoot or for signal that goes both ways (positive and negative).
+    subgraph Worker MCU Layer
+        WA[Worker MCU A]
+        WB[Worker MCU B]
+        WC[Worker MCU C]
+    end
 
-<img src="./images/tlc2272.png" width="300"> 
+    subgraph Master Processing Layer
+        MM[Master MCU]
+    end
 
-### AD620
-This is the instrumentation amplifier that is relatively cheap and widely available in Indonesian market.
+    subgraph HMI Dashboard
+        GUI[Dashboard GUI]
+    end
 
-| <img src="./images/ad620_1.png" width="150"> | <img src="./images/ad620_2.png" width="150"> |
-| ----------------------------------------- | ----------------------------------------- |
+    SA -->|Slot Status| WA
+    SB -->|Slot Status| WB
+    SC -->|Slot Status| WC
 
-## Digital Controller
-We will use STM32F411CE (the black pill) as our digital processor.
+    WA -->|Data Packet| MM
+    WB -->|Data Packet| MM
+    WC -->|Data Packet| MM
 
-| <img src="./images/prototype1.png" width="250"> | <img src="./images/prototype2.png" width="330"> |
-| ----------------------------------------- | ----------------------------------------- |
+    MM -->|Aggregated Result| GUI
 
-## Safety & Notes
+    style WA fill:#1E293B,stroke:#475569,stroke-width:2px,color:#F8FAFC
+    style WB fill:#1E293B,stroke:#475569,stroke-width:2px,color:#F8FAFC
+    style WC fill:#1E293B,stroke:#475569,stroke-width:2px,color:#F8FAFC
+    style MM fill:#14532D,stroke:#22C55E,stroke-width:2px,color:#F8FAFC
+    style GUI fill:#1E3A8A,stroke:#3B82F6,stroke-width:2px,color:#F8FAFC
+```
 
-- The MPS20N0040D is fragile—avoid over-pressure.
-- If powering from USB, beware ground noise from the host PC. A ferrite on the USB cable can help.
+### Node Description
 
-## Next-to-Do
-- 50/60 Hz notch filter (hum killer).
-- PCB layouting.
-- Performance evaluations.
+| Node Identifier    | Name                     | Responsibility                                                                       | Output                          |
+| :----------------- | :----------------------- | :----------------------------------------------------------------------------------- | :------------------------------ |
+| **Sensor A/B/C**   | Virtual Parking Sensor   | Simulates IoT ultrasonic/IR sensors detecting vehicle presence per slot.             | Slot status change events       |
+| **Worker MCU A**   | Area A Local Controller  | Reads sensor changes for slots A1–A3 and creates serialized data packets.            | Data Packet → Master MCU        |
+| **Worker MCU B**   | Area B Local Controller  | Reads sensor changes for slots B1–B3 and creates serialized data packets.            | Data Packet → Master MCU        |
+| **Worker MCU C**   | Area C Local Controller  | Reads sensor changes for slots C1–C3 and creates serialized data packets.            | Data Packet → Master MCU        |
+| **Master MCU**     | Central Aggregation Node | Receives all Worker packets, aggregates totals, and calculates global parking status. | Aggregated result → GUI         |
+| **Dashboard GUI**  | HMI Monitoring Console   | Renders live slot cards, graphs, workflow indicators, and communication log.          | Visual Display & Activity Graph |
 
-## Credits
+---
 
-- Instrumentation amplifier intro: https://www.youtube.com/watch?v=O0-iczIq1aU
-- INA333 review with AD620 suggestion: https://blog.robertelder.org/cjmcu-333-ina-333-instrumentation-amplifier/
-- A Designer’s Guide to Instrumentation Amplifiers (3rd Edition) https://www.analog.com/media/en/training-seminars/design-handbooks/designers-guide-instrument-amps-complete.pdf
+## 4. Distributed System Design
 
+Each Worker MCU operates independently as a local embedded edge node. They do not communicate with each other — all inter-node communication is strictly Worker-to-Master, enforcing separation of concerns and avoiding shared-state hazards:
+
+```mermaid
+sequenceDiagram
+    autonumber
+    participant SA as Sensor A/B/C
+    participant WA as Worker MCU A
+    participant WB as Worker MCU B
+    participant WC as Worker MCU C
+    participant MM as Master MCU
+    participant GUI as Dashboard GUI
+
+    loop Every Simulation Cycle
+        SA->>WA: simulate_sensor_change()
+        SA->>WB: simulate_sensor_change()
+        SA->>WC: simulate_sensor_change()
+
+        WA->>WA: create_data_packet()
+        WB->>WB: create_data_packet()
+        WC->>WC: create_data_packet()
+
+        WA->>MM: receive_packet(packet_A)
+        WB->>MM: receive_packet(packet_B)
+        WC->>MM: receive_packet(packet_C)
+
+        MM->>MM: aggregate_and_calculate()
+        MM->>GUI: return (total, occupied, available, area_summary)
+
+        Note over GUI: Update slot cards, graphs, workflow panel & log
+    end
+```
+
+- **Decoupled Workers**: Each Worker MCU independently processes its own sensor zone without knowledge of other workers, mirroring physical embedded MCU isolation.
+- **Centralized Aggregation**: The Master MCU receives all incoming packets and performs global occupancy calculations in a single aggregation pass.
+- **Non-Blocking GUI**: The dashboard uses `root.after()` callbacks to schedule each pipeline stage with configurable delays (`stage_delay`, `cycle_delay`), ensuring the GUI thread never freezes during processing.
+
+---
+
+## 5. Distribution Pipeline Workflow
+
+The simulation explicitly models each communication and processing stage as a distinct, observable pipeline step. Each stage activates a visual indicator on the dashboard before proceeding:
+
+```mermaid
+graph TD
+    S1[Stage 1: Distributed Sensor Reading] --> S2[Stage 2: Worker MCU Local Processing]
+    S2 --> S3[Stage 3: Data Packet Distribution]
+    S3 --> S4[Stage 4: Master MCU Data Aggregation]
+    S4 --> S5[Stage 5: Parking Status Calculation]
+    S5 --> S6[Stage 6: Dashboard and Graph Update]
+    S6 -->|Next Cycle| S1
+
+    style S1 fill:#0F172A,stroke:#38BDF8,color:#38BDF8
+    style S2 fill:#0F172A,stroke:#38BDF8,color:#38BDF8
+    style S3 fill:#0F172A,stroke:#38BDF8,color:#38BDF8
+    style S4 fill:#0F172A,stroke:#38BDF8,color:#38BDF8
+    style S5 fill:#0F172A,stroke:#38BDF8,color:#38BDF8
+    style S6 fill:#0F172A,stroke:#22C55E,color:#22C55E
+```
+
+### Stage Description
+
+| Stage | Name                          | Description                                                                               |
+| :---: | :---------------------------- | :---------------------------------------------------------------------------------------- |
+| **1** | Distributed Sensor Reading    | Each Worker MCU's virtual sensors randomly toggle slot occupancy states (25% probability per slot per cycle). |
+| **2** | Worker MCU Local Processing   | Each Worker MCU serializes its current slot data into a structured dictionary packet with a timestamp. |
+| **3** | Data Packet Distribution      | All Worker MCUs forward their packets to the Master MCU's receive buffer. Communication log entries are appended. |
+| **4** | Master MCU Data Aggregation   | Master MCU iterates over all received packets, computing per-area and global totals for occupied and available slots. |
+| **5** | Parking Status Calculation    | Dashboard view labels (Total, Occupied, Available, Cycle count) are updated from aggregated results. |
+| **6** | Dashboard and Graph Update    | ECG heartbeat graph and per-MCU bar chart are redrawn. Cycle then repeats after `cycle_delay`. |
+
+---
+
+## 6. Virtual Embedded System Architecture
+
+The software components are mapped directly to mirror a real IoT embedded hardware topology, simulating physical MCU boundaries in a virtual environment:
+
+```mermaid
+graph TD
+    subgraph Edge Sensor Devices
+        P[Parking Slot Sensors - Ultrasonic / IR] -->|Event Trigger| WM[Worker MCU Layer]
+    end
+
+    subgraph Worker MCU Layer
+        WM -->|Local Slot Data| W1[Worker MCU A - Area A]
+        WM -->|Local Slot Data| W2[Worker MCU B - Area B]
+        WM -->|Local Slot Data| W3[Worker MCU C - Area C]
+    end
+
+    subgraph Central Processing Node
+        W1 -->|Packet via Serial / BUS| MM[Master MCU]
+        W2 -->|Packet via Serial / BUS| MM
+        W3 -->|Packet via Serial / BUS| MM
+    end
+
+    subgraph Operations Control Center
+        MM -->|Network / HMI Protocol| D[Dashboard HMI GUI]
+    end
+
+    style W1 fill:#1E293B,stroke:#475569,color:#F8FAFC
+    style W2 fill:#1E293B,stroke:#475569,color:#F8FAFC
+    style W3 fill:#1E293B,stroke:#475569,color:#F8FAFC
+    style MM fill:#14532D,stroke:#22C55E,color:#F8FAFC
+    style D fill:#1E3A8A,stroke:#3B82F6,color:#F8FAFC
+```
+
+- **Worker MCU (Edge Node)**: Handles local sensor interfacing and data serialization independently. Each node only knows about its own parking zone.
+- **Master MCU (Gateway Node)**: Acts as the central data broker. Receives packets from all workers, calculates system-wide parking status, and pushes results to the display layer.
+- **HMI Dashboard (Control Room)**: The SCADA-equivalent display console. Renders occupancy visuals, live signal graphs, and logs all inter-MCU communication events.
+
+---
+
+## 7. Dashboard Features
+
+The Human-Machine Interface (HMI) provides a clean monitoring panel for the simulated parking system:
+
+1. **Header Panel**: Displays the system title and subtitle describing the simulation paradigm in full.
+2. **Worker MCU Slot Cards**: Three area cards (Area A, B, C), each displaying 3 parking slot buttons that toggle between green `KOSONG` (empty) and red `TERISI` (occupied) states, with a last-update timestamp from the Worker MCU.
+3. **Master MCU Dashboard Card**: Displays live counters for Cycle number, Total Slots, Slots Occupied (`Slot Terisi`), and Slots Available (`Slot Kosong`).
+4. **Distribution Pipeline Workflow Panel**: A 6-stage indicator list where the active stage is highlighted in blue (`●`) and idle stages remain grey (`○`), with a status text line showing the current stage description.
+5. **Communication Log Console**: A dark-themed scrollable text box that appends timestamped messages for every packet distribution and local processing event across all Worker MCUs.
+6. **Real-Time Parking Activity Signal (ECG Graph)**: A heartbeat-style waveform chart where amplitude is modulated by the number of occupied slots, providing an analog-style system activity visualization.
+7. **Slot Terisi per Worker MCU (Bar Chart)**: A bar chart comparing occupied slot counts across all three Worker MCU areas, updated every cycle.
+8. **Control Buttons**: Start Simulation, Stop, and Reset buttons for complete lifecycle management.
+
+---
+
+## 8. Installation & Requirements
+
+### Prerequisites
+
+- **Python 3.10+** (Ensure Python is added to the system environment `PATH`)
+- **OS Support**: Windows, Linux, or macOS (tested on Windows 11)
+
+### Package Dependencies
+
+The simulation uses `matplotlib` for plotting. `tkinter` is included in the Python standard library.
+
+```bash
+pip install matplotlib
+```
+
+---
+
+## 9. How To Run
+
+Ensure you are located inside the root project directory.
+
+### Running the Simulation
+
+```bash
+python smart_parking_simulation.py
+```
+
+- **Behavior**: The GUI window will open. Click **"Start Simulation"** to begin the automated distribution pipeline workflow. The slot cards, graphs, workflow indicators, and communication log will all update in real time.
+- **Stop**: Click **"Stop"** to pause the simulation loop at any time without resetting state.
+- **Reset**: Click **"Reset"** to clear all slot states, graph history, log output, and cycle counter back to initial conditions.
+
+---
+
+## 10. Project Structure
+
+```
+CuffnCode/
+│
+├── smart_parking_simulation.py     # Main simulation entry point — GUI + all logic
+│
+├── images/
+│   ├── cuffncode.png               # Project logo
+│   ├── complete_device.png         # Blood pressure device photo
+│   ├── AFE.png                     # Analog Front End schematic screenshot
+│   ├── tina-ac-diag.jpg            # TINA-TI AC simulation diagram
+│   ├── mps20n0040d_1.png           # Pressure sensor image
+│   ├── mps20n0040d_2.png           # Pressure sensor pinout
+│   ├── tlc2272.png                 # Op-amp component image
+│   ├── ad620_1.png                 # Instrumentation amplifier image
+│   ├── ad620_2.png                 # AD620 pinout diagram
+│   ├── prototype1.png              # PCB prototype front
+│   └── prototype2.png              # PCB prototype back
+│
+├── KiCad/
+│   ├── AFE.kicad_pro               # KiCad project file
+│   ├── AFE.kicad_sch               # Analog Front End schematic
+│   ├── AFE.kicad_pcb               # PCB layout file
+│   └── AFE.kicad_prl               # KiCad project local settings
+│
+└── TINA-TI/
+    ├── afe-v1.tsc                  # TINA-TI simulation — AFE Version 1
+    ├── afe-vs-input.tsc            # TINA-TI simulation — vs input sweep
+    ├── ad620.TSM                   # AD620 TINA model
+    ├── ad620.cir                   # AD620 SPICE netlist
+    ├── tlc2272.cir                 # TLC2272 SPICE netlist
+    └── tlv2772.cir                 # TLV2772 SPICE netlist
+```
+
+### Class Overview
+
+| Class                                    | Responsibility                                                                                               |
+| :--------------------------------------- | :----------------------------------------------------------------------------------------------------------- |
+| `WorkerMCU`                              | Simulates an edge MCU node managing 3 parking slots. Handles sensor simulation and data packet creation.     |
+| `MasterMCU`                              | Receives packets from all Worker MCUs, aggregates data, and computes global parking occupancy statistics.    |
+| `SmartParkingDistributionWorkflowGUI`    | Main Tkinter GUI class. Owns all widgets, orchestrates the 6-stage pipeline, manages graphs and the log console. |
+
+---
+
+Presented inside a clean, interactive monitoring dashboard, this project stands as a fully integrated showcase of **Distributed System** design, **Multi-MCU communication pipeline**, and **real-time embedded simulation** principles.
